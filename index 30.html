@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinalizador Financeiro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #6A4F4B;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        main {
+            padding: 1rem;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: #6A4F4B;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .signal {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .buy, .sell {
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            cursor: pointer;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .buy {
+            border-bottom: 50px solid green;
+        }
+
+        .sell {
+            border-top: 50px solid red;
+        }
+
+        /* Animação de pulsar e subir/descer */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3) translateY(-10px);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .buy.show {
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        .sell.show {
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        #get-signal {
+            padding: 0.5rem;
+            font-size: 1rem;
+            background-color: #ccc;
+            color: #333;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        #confidence-level {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        #ticker-select {
+            margin: 1rem auto;
+            display: block;
+            padding: 0.5rem;
+            font-size: 1rem;
+            width: 80%;
+            max-width: 300px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Sinalizador Financeiro</h1>
+        <p>Automação e sinais manuais para decisões financeiras</p>
+    </header>
+    <main>
+        <section id="signal">
+            <h2>Sinal Financeiro</h2>
+            <select id="ticker-select">
+                <option value="">Selecione um ativo</option>
+                <option value="C:EURUSD">EUR/USD</option>
+                <option value="C:GBPUSD">GBP/USD</option>
+                <option value="C:USDJPY">USD/JPY</option>
+                <!-- 120 moedas -->
+                <option value="C:AUDUSD">AUD/USD</option>
+                <option value="C:CADUSD">CAD/USD</option>
+                <option value="C:CHFUSD">CHF/USD</option>
+                <option value="C:NZDUSD">NZD/USD</option>
+                <option value="C:USDCAD">USD/CAD</option>
+                <option value="C:USDCHF">USD/CHF</option>
+                <option value="C:GBPJPY">GBP/JPY</option>
+                <option value="C:EURGBP">EUR/GBP</option>
+                <option value="C:EURJPY">EUR/JPY</option>
+                <option value="C:USDSEK">USD/SEK</option>
+                <option value="C:USDAUD">USD/AUD</option>
+                <option value="C:USDBRL">USD/BRL</option>
+                <option value="C:USDZAR">USD/ZAR</option>
+                <option value="C:USDMXN">USD/MXN</option>
+                <option value="C:USDCNH">USD/CNH</option>
+                <option value="C:EURCHF">EUR/CHF</option>
+                <option value="C:GBPCHF">GBP/CHF</option>
+                <option value="C:GBPUSD">GBP/USD</option>
+                <option value="C:USDHKD">USD/HKD</option>
+                <option value="C:USDPHP">USD/PHP</option>
+                <option value="C:USDSGD">USD/SGD</option>
+                <option value="C:USDINR">USD/INR</option>
+                <option value="C:EURINR">EUR/INR</option>
+                <option value="C:USDTRY">USD/TRY</option>
+                <option value="C:EURTRY">EUR/TRY</option>
+                <option value="C:USDPLN">USD/PLN</option>
+                <option value="C:EURPLN">EUR/PLN</option>
+                <option value="C:USDNOK">USD/NOK</option>
+                <option value="C:EURNOK">EUR/NOK</option>
+                <option value="C:USDSEK">USD/SEK</option>
+                <option value="C:EURSEK">EUR/SEK</option>
+                <option value="C:USDKRW">USD/KRW</option>
+                <option value="C:EURKRW">EUR/KRW</option>
+                <option value="C:USDCLP">USD/CLP</option>
+                <option value="C:EURCLP">EUR/CLP</option>
+                <option value="C:USDIDR">USD/IDR</option>
+                <option value="C:EURIDR">EUR/IDR</option>
+                <option value="C:USDTHB">USD/THB</option>
+                <option value="C:EURTHB">EUR/THB</option>
+                <option value="C:USDVND">USD/VND</option>
+                <option value="C:EURVND">EUR/VND</option>
+                <!-- Continue para adicionar até 120 moedas -->
+            </select>
+            <div class="buttons">
+                <div class="buy" style="display: none;"></div>
+                <div class="sell" style="display: none;"></div>
+                <div id="percent-change" class="signal"></div>
+                <div id="confidence-level" class="signal"></div>
+            </div>
+            <button id="get-signal">Obter Sinal</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Sinalizador Financeiro. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const API_KEY = "PRGFJGofcRQ30u_zMopVKsyROVCMgkSD";
+        const BASE_URL = "https://api.polygon.io";
+
+        async function fetchSignal(ticker) {
+            try {
+                const response = await axios.get(`${BASE_URL}/v2/aggs/ticker/${ticker}/prev`, {
+                    headers: {
+                        Authorization: `Bearer ${API_KEY}`
+                    }
+                });
+
+                if (response.data.results && response.data.results.length > 0) {
+                    const data = response.data.results[0];
+                    const closePrice = data.c;
+                    const openPrice = data.o;
+
+                    const percentChange = ((closePrice - openPrice) / openPrice * 100).toFixed(2);
+                    const confidence = calculateConfidence(percentChange);
+
+                    if (closePrice > openPrice) {
+                        displaySignal('buy', percentChange, confidence);
+                    } else {
+                        displaySignal('sell', percentChange, confidence);
+                    }
+                } else {
+                    throw new Error("Dados não disponíveis para o ativo selecionado.");
+                }
+            } catch (error) {
+                console.error("Erro ao obter o sinal:", error);
+                alert("Erro ao obter o sinal. Verifique o símbolo do ativo e tente novamente.");
+            }
+        }
+
+        function calculateConfidence(percentChange) {
+            let confidence = 0;
+            if (Math.abs(percentChange) >= 2) {
+                confidence = 100;
+            } else if (Math.abs(percentChange) >= 1) {
+                confidence = 75;
+            } else if (Math.abs(percentChange) >= 0.5) {
+                confidence = 50;
+            } else {
+                confidence = 25;
+            }
+            return confidence;
+        }
+
+        function displaySignal(type, percentChange, confidence) {
+            const percentChangeElement = document.getElementById('percent-change');
+            const confidenceElement = document.getElementById('confidence-level');
+
+            if (type === 'buy') {
+                document.querySelector('.buy').style.display = 'block';
+                document.querySelector('.sell').style.display = 'none';
+                document.querySelector('.buy').classList.add('show');
+                percentChangeElement.textContent = `Compra recomendada (+${percentChange}%)`;
+                percentChangeElement.style.color = 'green';
+            } else {
+                document.querySelector('.buy').style.display = 'none';
+                document.querySelector('.sell').style.display = 'block';
+                document.querySelector('.sell').classList.add('show');
+                percentChangeElement.textContent = `Venda recomendada (${percentChange}%)`;
+                percentChangeElement.style.color = 'red';
+            }
+
+            confidenceElement.textContent = `Confiança: ${confidence}%`;
+        }
+
+        document.getElementById('get-signal').addEventListener('click', () => {
+            const ticker = document.getElementById('ticker-select').value;
+            if (ticker) {
+                fetchSignal(ticker);
+            } else {
+                alert("Por favor, selecione um ativo.");
+            }
+        });
+    </script>
+</body>
+</html>
